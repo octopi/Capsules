@@ -9,5 +9,28 @@
    	    android:layout_width="fill_parent"
    	    android:layout_height="wrap_content"
    	    android:text="Add picture" />
-
+   	
+   	<Button
+   	    android:id="@+id/addVideoButton"
+   	    android:layout_width="fill_parent"
+   	    android:layout_height="wrap_content"
+   	    android:text="Add video" />
+   	
+   	<Button
+   	    android:id="@+id/decryptButton"
+   	    android:layout_width="fill_parent"
+   	    android:layout_height="wrap_content"
+   	    android:text="Decrypt" />
+   	
+   	<Button
+   	    android:id="@+id/createCapsuleButton"
+   	    android:layout_width="fill_parent"
+   	    android:layout_height="wrap_content"
+   	    android:text="Create capsule!" />
+   	
+   	<TextView
+   	    android:id="@+id/capsuleFiles"
+   	    android:layout_width="fill_parent"
+   	    android:layout_height="fill_parent" />
+   	    
 </LinearLayout>
