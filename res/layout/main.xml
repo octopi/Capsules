@@ -3,6 +3,11 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
+    
+    <TextView
+        android:id="@+id/instructions"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
    	<Button
    	    android:id="@+id/addPicButton"
@@ -27,6 +32,12 @@
    	    android:layout_width="fill_parent"
    	    android:layout_height="wrap_content"
    	    android:text="Create capsule!" />
+   	
+   	<Button
+   	    android:id="@+id/fbLogout"
+   	    android:layout_width="fill_parent"
+   	    android:layout_height="wrap_content"
+   	    android:text="FB Logout" />
    	
    	<TextView
    	    android:id="@+id/capsuleFiles"

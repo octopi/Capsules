@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -27,11 +28,14 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import com.facebook.android.Facebook;
+import fi.foyt.foursquare.api.entities.CompactUser;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -48,7 +52,12 @@ public class DevFestActivity extends Activity {
 	private static final String TAG = "DevFest";
 	
 	private ArrayList<File> capsuleFiles;
-	private Facebook facebook;
+	private String fsqid;
+	private String fsqName;
+	
+	private SharedPreferences mPrefs;
+	
+	private ArrayList<CompactUser> friendsList;
 	
 	TextView capsuleList;
 	Button createCapsule;
@@ -60,7 +69,23 @@ public class DevFestActivity extends Activity {
 		setContentView(R.layout.main);
 		
 		capsuleFiles = new ArrayList<File>();
-
+		
+		/* FOURSAUARE INITIALIZATION */
+		
+        mPrefs = getSharedPreferences("OurCapsulesAuth", 0);
+        fsqid = mPrefs.getString("fsqid", null);
+        fsqName = mPrefs.getString("fsqName", null);
+        friendsList = (ArrayList<CompactUser>) getIntent().getSerializableExtra("friendsList");
+        String instrString = "You are about to make a capsule with: ";
+        for(int i=0;i<friendsList.size()-1;i++) {
+        	instrString+= friendsList.get(i).getFirstName()+", ";
+        }
+        if(friendsList.size() > 0) 
+        	instrString += friendsList.get(friendsList.size()-1).getFirstName();
+        ((TextView) findViewById(R.id.instructions)).setText(instrString);
+        
+		
+		/* ADD PICS */
 		Button addPic = (Button) findViewById(R.id.addPicButton);
 		addPic.setOnClickListener(new View.OnClickListener() {
 
@@ -73,6 +98,7 @@ public class DevFestActivity extends Activity {
 			}
 		});
 		
+		/* CREATE NEW CAPSULE */
 		createCapsule = (Button) findViewById(R.id.createCapsuleButton);
 		createCapsule.setOnClickListener(new View.OnClickListener() {
 			
@@ -99,21 +125,30 @@ public class DevFestActivity extends Activity {
 						String strKey = Base64.encodeToString(key.getEncoded(), Base64.DEFAULT);
 						Log.v(TAG, "key: "+strKey);
 						
+						String capsuleFilesJson = "{ "; // create a JSON string for capsule files... used later
 						for(int i=0;i<capsuleFiles.size();i++) {
 							File origFile = capsuleFiles.get(i);
-							doCipher(Cipher.ENCRYPT_MODE, strKey, origFile, new File(destDir+"/"+origFile.getName()));
-							origFile.delete();
-							Log.v(TAG, "original file "+origFile.getPath()+" exists? "+origFile.exists());
+							File newFile = new File(destDir+"/"+origFile.getName());
+							doCipher(Cipher.ENCRYPT_MODE, strKey, origFile, newFile);
+							//origFile.delete();
+							capsuleFilesJson += "\""+i+"\": \""+newFile.getAbsolutePath()+"\"";
+							if(i < capsuleFiles.size()-1) {
+								capsuleFilesJson += ", ";
+							}
 						}
+						capsuleFilesJson += "}";
 						
 						// create new capsule object in database via HTTP post request to web service
 						HttpClient httpclient = new DefaultHttpClient();
-					    HttpPost httppost = new HttpPost("http://www.yoursite.com/script.php");
+					    HttpPost httppost = new HttpPost("http://young-spring-5136.herokuapp.com/new_capsule");
 
 					    try {
 					        // Add your data
-					        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+					        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 					        nameValuePairs.add(new BasicNameValuePair("strKey", strKey));
+					        nameValuePairs.add(new BasicNameValuePair("members", "{\"0\": {\"fsqid\": "+fsqid+", \"fsqName\": \""+fsqName+"\"}, \"1\": { \"fsqid\": 123, \"fsqName\": \"Test person "+Math.floor(Math.random()*20)+"\" } }"));
+					        nameValuePairs.add(new BasicNameValuePair("fileList", capsuleFilesJson));
+					        nameValuePairs.add(new BasicNameValuePair("locked", "true"));
 					        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 					        // Execute HTTP Post Request
@@ -122,6 +157,8 @@ public class DevFestActivity extends Activity {
 					        for(int i=0;i<responseHeaders.length;i++) {
 					        	Log.v(TAG, responseHeaders[i].getName()+": "+responseHeaders[i].getValue());
 					        }
+					        
+					        capsuleList.setText(capsuleList.getText()+"\n Capsule created!");	
 					        
 					    } catch (ClientProtocolException e) {
 					        // TODO Auto-generated catch block
@@ -135,6 +172,15 @@ public class DevFestActivity extends Activity {
 					}
 					
 				}
+			}
+		});
+		
+		/* FOURSQUARE LOGOUT */
+		((Button) findViewById(R.id.fbLogout)).setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO
 			}
 		});
 		
@@ -167,28 +213,6 @@ public class DevFestActivity extends Activity {
 				
 				capsuleFiles.add(origFile);
 				capsuleList.setText(capsuleList.getText()+"\n"+origFile.getName());				
-				
-
-				/*File sdDir = Environment.getExternalStorageDirectory();
-
-				Log.v(TAG, "oi: "+oiString+", media: "+mediaString+", sddir: "+sdDir);
-
-				String[] makeTheseDirs = {sdDir.toString()+"/Android/data/me.davidhu", sdDir.toString()+"/Android/data/me.davidhu/files"};
-				File destDir;
-				for(int i=0;i<makeTheseDirs.length;i++) {
-					destDir = new File(makeTheseDirs[i]);
-					if(!destDir.exists())
-						destDir.mkdir();
-				}
-
-				destDir = new File(makeTheseDirs[makeTheseDirs.length-1]);
-
-				if(destDir.exists()) { 		   								
-					// write & delete encrypted file
-					doCipher(Cipher.ENCRYPT_MODE, null, origFile, new File(destDir+"/outencrypted.jpg"));
-					origFile.delete();
-					Log.v(TAG, "original file exists? "+origFile.exists());
-				}*/
 			}
 		}
 	}
@@ -256,6 +280,11 @@ public class DevFestActivity extends Activity {
 		return false;
 	}
 	
+	public void goBack() {
+		Intent intent = new Intent(this, HomescreenActivity.class);
+		startActivity(intent);
+	}
+	
 	public String getPath(Uri uri) {
         String[] projection = { MediaStore.Images.Media.DATA };
         Cursor cursor = managedQuery(uri, projection, null, null, null);
@@ -269,5 +298,5 @@ public class DevFestActivity extends Activity {
             return cursor.getString(column_index);
         }
         else return null;
-    }
+    }	
 }

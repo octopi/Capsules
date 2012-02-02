@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Your current capsules" />
+    
+    <LinearLayout
+        android:id="@+id/capsuleList"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"></LinearLayout>
+    
+    <Button
+        android:id="@+id/joinCapsule"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Join friend creating capsule" />
+    
+    <Button
+        android:id="@+id/newCapsule"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Create new capsule" />
+</LinearLayout>
