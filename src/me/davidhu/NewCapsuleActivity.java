@@ -85,11 +85,11 @@ public class NewCapsuleActivity extends Activity {
 		fsqName = mPrefs.getString("fsqName", null);
 		friendsList = (ArrayList<CompactUser>) getIntent().getSerializableExtra("friendsList");
 		String instrString = "You are about to make a capsule with: ";
-		for(int i=0;i<friendsList.size()-1;i++) {
+		for(int i=0;i<friendsList.size()-2;i++) { // offset 2 because user is always last and don't want to add him to string
 			instrString+= friendsList.get(i).getFirstName()+", ";
 		}
 		if(friendsList.size() > 0) 
-			instrString += friendsList.get(friendsList.size()-1).getFirstName();
+			instrString += friendsList.get(friendsList.size()-2).getFirstName();
 		((TextView) findViewById(R.id.instructions)).setText(instrString);
 
 
@@ -161,9 +161,12 @@ public class NewCapsuleActivity extends Activity {
 							CompactUser curr;
 							for(int i=0;i<friendsList.size()-1;i++) {
 								curr = friendsList.get(i);
-								friendsObject += "{\""+i+"\": {\"fsqid\": "+curr.getId()+", \"fsqName\": \""+curr.getFirstName()+"\"}, ";
+								friendsObject += "\""+i+"\": {\"fsqid\": "+curr.getId()+", \"fsqName\": \""+curr.getFirstName()+"\"}, ";
 							}
-							nameValuePairs.add(new BasicNameValuePair("members", "{\"0\": {\"fsqid\": "+fsqid+", \"fsqName\": \""+fsqName+"\"}, \"1\": { \"fsqid\": 123, \"fsqName\": \"Test person "+Math.floor(Math.random()*20)+"\" } }"));
+							curr = friendsList.get(friendsList.size()-1);
+							friendsObject += "\""+(friendsList.size()-1)+"\": {\"fsqid\": "+curr.getId()+", \"fsqName\": \""+curr.getFirstName()+"\"}";
+							friendsObject += "}";
+							nameValuePairs.add(new BasicNameValuePair("members", friendsObject));
 							nameValuePairs.add(new BasicNameValuePair("fileList", capsuleFilesJson));
 							nameValuePairs.add(new BasicNameValuePair("locked", "true"));
 							httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
@@ -262,9 +265,9 @@ public class NewCapsuleActivity extends Activity {
 	        ImageView imageView;
 	        if (convertView == null) {  // if it's not recycled, initialize some attributes
 	            imageView = new ImageView(mContext);
-	            imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
+	            imageView.setLayoutParams(new GridView.LayoutParams(100, 100));
 	            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-	            imageView.setPadding(8, 8, 8, 8);
+	            imageView.setPadding(10, 10, 10, 10);
 	        } else {
 	            imageView = (ImageView) convertView;
 	        }

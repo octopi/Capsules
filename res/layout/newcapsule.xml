@@ -3,26 +3,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+
     <TextView
         android:id="@+id/instructions"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
-   	<Button
-   	    android:id="@+id/addPicButton"
-   	    android:layout_width="fill_parent"
-   	    android:layout_height="wrap_content"
-   	    android:text="Add picture" />
-   	
-   	<Button
-   	    android:id="@+id/createCapsuleButton"
-   	    android:layout_width="fill_parent"
-   	    android:layout_height="wrap_content"
-   	    android:text="Create capsule!" />
-   	
-   	<GridView
-   	    android:id="@+id/photoGrid"
-   	    android:layout_width="fill_parent"
-   	    android:layout_height="wrap_content"></GridView>
+    <Button
+        android:id="@+id/addPicButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Add picture" />
+
+    <Button
+        android:id="@+id/createCapsuleButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Create capsule!" />
+
+    <GridView
+        android:id="@+id/photoGrid"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="auto_fit"
+        android:layout_gravity="center_vertical"
+        android:stretchMode="columnWidth" >
+    </GridView>
 
 </LinearLayout>
