@@ -44,7 +44,7 @@ public class UnlockCapsuleActivity extends Activity {
 			JSONArray fileListNames = fileList.names();
 			for(int i=0;i<fileListNames.length();i++) {
 				File currFile = new File(fileList.getString(fileListNames.getString(i)));
-				doCipher(Cipher.DECRYPT_MODE, strKey, currFile, new File("/mnt/sdcard/Android/data/me.davidhu/files/outdecrypted"+i+".jpg"));
+				CapsuleCipher.doCipher(CapsuleCipher.DECRYPT, strKey, currFile, new File("/mnt/sdcard/Android/data/me.davidhu/files/outdecrypted"+i+".jpg"));
 				//encrypted.delete();
 			}
 		} catch (JSONException e) {
@@ -53,58 +53,4 @@ public class UnlockCapsuleActivity extends Activity {
 		}
 	}
 
-	private boolean doCipher(int mode, String strKey, File from, File to) {
-		try {
-			byte[] byteKey = Base64.decode(strKey, Base64.DEFAULT); 
-			SecretKey key = new SecretKeySpec(byteKey, "DES");;
-			/*if(mode == Cipher.ENCRYPT_MODE) {
-				key = KeyGenerator.getInstance("DES").generateKey();
-				Log.v(TAG, "key: "+Base64.encodeToString(key.getEncoded(), Base64.DEFAULT));
-			} else if(mode == Cipher.DECRYPT_MODE) {
-				byte[] byteKey = Base64.decode(strKey, Base64.DEFAULT); 
-				key = new SecretKeySpec(byteKey, "DES");
-			} else {
-				return false;
-			}*/
-			Log.v("", "starting cipher...");
-			Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
-			cipher.init(mode, key);
-			
-			FileInputStream in = new FileInputStream(from);
-			byte[] plainData = new byte[(int)from.length()];
-			in.read(plainData);
-			
-			byte[] encryptedData = cipher.doFinal(plainData);
-			FileOutputStream target = new FileOutputStream(to);
-			target.write(encryptedData);
-			target.close();
-			
-			Log.v("", "output exists "+to.exists());
-			
-			return to.exists();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return false;
-	}
 }

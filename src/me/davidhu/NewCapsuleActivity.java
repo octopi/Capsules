@@ -139,7 +139,7 @@ public class NewCapsuleActivity extends Activity {
 						for(int i=0;i<capsuleFiles.size();i++) {
 							File origFile = capsuleFiles.get(i);
 							File newFile = new File(destDir+"/"+origFile.getName());
-							CapsuleCipher.doCipher(Cipher.ENCRYPT_MODE, strKey, origFile, newFile);
+							CapsuleCipher.doCipher(CapsuleCipher.ENCRYPT, strKey, origFile, newFile);
 							//origFile.delete();
 							capsuleFilesJson += "\""+i+"\": \""+newFile.getAbsolutePath()+"\"";
 							if(i < capsuleFiles.size()-1) {
@@ -178,10 +178,8 @@ public class NewCapsuleActivity extends Activity {
 							for(int i=0;i<responseHeaders.length;i++) {
 								Log.v(TAG, responseHeaders[i].getName()+": "+responseHeaders[i].getValue());
 							}
+							
 
-
-						} catch (ClientProtocolException e) {
-							// TODO Auto-generated catch block
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 						}

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -19,51 +20,83 @@ import android.util.Base64;
 import android.util.Log;
 
 public class CapsuleCipher {
+
+	public final static int ENCRYPT = 1;
+	public final static int DECRYPT = 0;
+
 	public static boolean doCipher(int mode, String strKey, File from, File to) {
 		try {
 			byte[] byteKey = Base64.decode(strKey, Base64.DEFAULT); 
 			SecretKey key = new SecretKeySpec(byteKey, "DES");;
 			Log.v("capsules", "cipher init");
-			Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
-			cipher.init(mode, key);
-			
+
 			FileInputStream in = new FileInputStream(from);
-			byte[] plainData = new byte[(int)from.length()];
-			in.read(plainData);
-			
-			Log.v("capsules", "cipher before");
-			byte[] encryptedData = cipher.doFinal(plainData);
-			Log.v("capsules", "cipher after");
 			FileOutputStream target = new FileOutputStream(to);
-			target.write(encryptedData);
-			target.close();
-			
+			/*byte[] plainData = new byte[(int)from.length()];
+			in.read(plainData);
+
+			Log.v("capsules", "cipher before");
+			//byte[] encryptedData = cipher.doFinal(plainData);*/
+
+			Log.v("capsules", "cipher before");
+			if(mode == ENCRYPT) {
+				byte[] plainData = readFile(from);
+				byte[] encryptedData = new byte[plainData.length+2];
+				encryptedData[0] = 127;
+				encryptedData[1] = 127;
+				for(int i=2;i<plainData.length+2;i++) {
+					encryptedData[i] = plainData[i-2];
+				}
+
+				target.write(encryptedData);
+				target.close();
+			} else if(mode == DECRYPT) {
+				byte[] plainData = CapsuleCipher.readFile(from);
+				byte[] decryptedData = new byte[plainData.length+2];
+				Log.v("capsules", "cipher before");
+				for(int i=2;i<plainData.length;i++) {
+					decryptedData[i-2] = plainData[i];
+				}
+
+				target.write(decryptedData);
+				target.close();
+			}
+
+			Log.v("capsules", "cipher after");
+
+
 			Log.v("capsules", "output exists "+to.exists());
-			
+
 			return to.exists();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NoSuchPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IllegalBlockSizeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (BadPaddingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		} 
+
 		return false;
+	}
+
+	public static byte[] readFile (File file) throws IOException {
+		// Open file
+		RandomAccessFile f = new RandomAccessFile(file, "r");
+
+		try {
+			// Get and check length
+			long longlength = f.length();
+			int length = (int) longlength;
+			if (length != longlength) throw new IOException("File size >= 2 GB");
+
+			// Read file and return data
+			byte[] data = new byte[length];
+			f.readFully(data);
+			return data;
+		}
+		finally {
+			f.close();
+		}
 	}
 }
