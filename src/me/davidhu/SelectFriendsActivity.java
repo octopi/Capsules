@@ -90,9 +90,16 @@ public class SelectFriendsActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(v.getContext(), DevFestActivity.class);
-				intent.putExtra("friendsList", friendsHereList);
-				startActivity(intent);
+				try {
+					Intent intent = new Intent(v.getContext(), NewCapsuleActivity.class);
+					// add current user to the list of people that need to check in to unlock
+					friendsHereList.add(fsq.user("self").getResult());
+					intent.putExtra("friendsList", friendsHereList);
+					startActivity(intent);
+				} catch (FoursquareApiException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 	}

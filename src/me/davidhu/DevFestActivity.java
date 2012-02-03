@@ -146,6 +146,13 @@ public class DevFestActivity extends Activity {
 					        // Add your data
 					        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 					        nameValuePairs.add(new BasicNameValuePair("strKey", strKey));
+					        
+					        String friendsObject = "{";
+					        CompactUser curr;
+					        for(int i=0;i<friendsList.size()-1;i++) {
+					        	curr = friendsList.get(i);
+					        	friendsObject += "{\""+i+"\": {\"fsqid\": "+curr.getId()+", \"fsqName\": \""+curr.getFirstName()+"\"}, ";
+					        }
 					        nameValuePairs.add(new BasicNameValuePair("members", "{\"0\": {\"fsqid\": "+fsqid+", \"fsqName\": \""+fsqName+"\"}, \"1\": { \"fsqid\": 123, \"fsqName\": \"Test person "+Math.floor(Math.random()*20)+"\" } }"));
 					        nameValuePairs.add(new BasicNameValuePair("fileList", capsuleFilesJson));
 					        nameValuePairs.add(new BasicNameValuePair("locked", "true"));

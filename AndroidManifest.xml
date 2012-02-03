@@ -31,6 +31,8 @@
         </activity>
         <activity android:name=".SelectFriendsActivity" >
         </activity>
+        <activity android:name=".NewCapsuleActivity" >
+        </activity>
     </application>
 
 </manifest>
