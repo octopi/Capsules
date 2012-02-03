@@ -32,12 +32,7 @@ public class CapsuleCipher {
 
 			FileInputStream in = new FileInputStream(from);
 			FileOutputStream target = new FileOutputStream(to);
-			/*byte[] plainData = new byte[(int)from.length()];
-			in.read(plainData);
-
-			Log.v("capsules", "cipher before");
-			//byte[] encryptedData = cipher.doFinal(plainData);*/
-
+			
 			Log.v("capsules", "cipher before");
 			if(mode == ENCRYPT) {
 				byte[] plainData = readFile(from);

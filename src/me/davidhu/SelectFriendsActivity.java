@@ -24,6 +24,7 @@ import android.widget.LinearLayout;
 public class SelectFriendsActivity extends Activity {
 
 	private FoursquareApi fsq; 
+	private CompleteUser user;
 	ArrayList<CompactUser> friendsHereList;
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -44,29 +45,30 @@ public class SelectFriendsActivity extends Activity {
 
 		// get friends who are here now and add to view
 		try {
-			CompleteUser user = fsq.user("self").getResult();
+			user = fsq.user("self").getResult();
 			CompactVenue venue = user.getCheckins().getItems()[0].getVenue();
 			Checkin[] herenow = fsq.venue(venue.getId()).getResult().getHereNow().getGroups()[0].getItems(); // needed for some reason... (prob CompleteVenue a subclass of CompactVenue). 0 returns friends list
 			Log.v("4sq", "herenow at: "+venue.getName()+" ("+venue.getId()+") "+venue.getHereNow());
 			for(int i=0;i<herenow.length;i++) {
 				final CompactUser currUser = herenow[i].getUser();
+				if(!currUser.getId().equals(user.getId())) {
+					final CheckBox cb = new CheckBox(this);
+					cb.setText(herenow[i].getUser().getFirstName());
+					friendsPane.addView(cb);
 
-				final CheckBox cb = new CheckBox(this);
-				cb.setText(herenow[i].getUser().getFirstName());
-				friendsPane.addView(cb);
+					cb.setOnClickListener(new View.OnClickListener() {
 
-				cb.setOnClickListener(new View.OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						if(cb.isChecked())
-							friendsHereList.add(currUser);
-						else
-							friendsHereList.remove(currUser);
-					}
-				});
+						@Override
+						public void onClick(View v) {
+							if(cb.isChecked())
+								friendsHereList.add(currUser);
+							else
+								friendsHereList.remove(currUser);
+						}
+					});
+				}
 			}
-			
+
 			// dummy data for testing... Sid will always show up
 			final CompactUser dummy = fsq.user("4372968").getResult();
 			CheckBox cb = new CheckBox(this);
