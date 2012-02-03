@@ -155,8 +155,7 @@ public class NewCapsuleActivity extends Activity {
 						try {
 							// Add your data
 							List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-							nameValuePairs.add(new BasicNameValuePair("strKey", strKey));
-
+								
 							String friendsObject = "{";
 							CompactUser curr;
 							for(int i=0;i<friendsList.size()-1;i++) {
@@ -167,6 +166,8 @@ public class NewCapsuleActivity extends Activity {
 							friendsObject += "\""+(friendsList.size()-1)+"\": {\"fsqid\": "+curr.getId()+", \"fsqName\": \""+curr.getFirstName()+"\"}";
 							friendsObject += "}";
 							nameValuePairs.add(new BasicNameValuePair("members", friendsObject));
+							nameValuePairs.add(new BasicNameValuePair("strKey", strKey));		
+							nameValuePairs.add(new BasicNameValuePair("creator", fsqid));
 							nameValuePairs.add(new BasicNameValuePair("fileList", capsuleFilesJson));
 							nameValuePairs.add(new BasicNameValuePair("locked", "true"));
 							httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
