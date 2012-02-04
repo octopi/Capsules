@@ -3,7 +3,20 @@
 
     <string name="hello">Hello World, DevFestActivity!</string>
     <string name="app_name">DevFest</string>
-    
     <string name="friendScreenString">Who do you want to create a new capsule with? Here are your nearby friends.</string>
+
+    <style name="ButtonText">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
+    </style>
 
 </resources>

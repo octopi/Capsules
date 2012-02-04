@@ -16,14 +16,9 @@
         android:orientation="vertical"></LinearLayout>
     
     <Button
-        android:id="@+id/joinCapsule"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Join friend creating capsule" />
-    
-    <Button
         android:id="@+id/newCapsule"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/pink_button"
         android:text="Create new capsule" />
 </LinearLayout>

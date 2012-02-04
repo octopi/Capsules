@@ -19,18 +19,19 @@ import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 public class HomescreenActivity extends Activity {
 	/** Called when the activity is first created. */
 	
 	WebView foursquareWebView; 
-	LinearLayout thisView;
+	RelativeLayout thisView;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.homescreen);
-		thisView = (LinearLayout) findViewById(R.id.mainLayout);
+		thisView = (RelativeLayout) findViewById(R.id.mainLayout);
 		
 		// check to see if already logged in before and auto-advance
 		SharedPreferences settings = getSharedPreferences("OurCapsulesAuth", 0);
